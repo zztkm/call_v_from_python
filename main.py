@@ -1,4 +1,4 @@
-from ctypes import CDLL, c_double
+from ctypes import CDLL, c_char_p, c_double
 import os
 import math
 
@@ -15,9 +15,13 @@ def main():
     assert lib.sqrt_of_sum_of_squares(c_double(1.1), c_double(2.2)) == math.sqrt(1.1*1.1 + 2.2*2.2), "Cannot validate V sqrt_of_sum_of_squares()."
 
     # 文字列のやり取りテスト
-    hello: int = lib.hello(b"zztkm")
-    # print(hello.decode("utf-8"))
-    print(hello) # int が返ってきてるっぽい
+    # デフォルトで C int を返すと仮定されているので
+    # 戻り値の型を指定する
+    hello = lib.hello
+    hello.restype = c_char_p
+    res: bytes = hello(b"zztkm")
+    print(res)
+    print(res.decode("utf-8"))
 
 
 if __name__ == "__main__":
